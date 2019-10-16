@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<style type="text/css">
+			* {
+				margin: 0;
+				padding: 0;
+				text-decoration: none;
+			}
+			
+			.clearfix:after {
+				content: '';
+				display: block;
+				height: 0;
+				clear: both;
+				visibility: hidden
+			}
+			
+			body {
+				background: #ccc;
+			}
+			
+			.ell {
+				border-left: 1px solid #999;
+				color: #999;
+				font-size: 14px;
+				padding: 0 4px 0 4px;
+			}
+			
+			.ell:first-of-type {
+				border-left: none;
+			}
+			
+			.ent:last-of-type {
+				border-bottom: none !important;
+			}
+		</style>
+
+	</head>
+
+	<body>
+		<div id="box">
+			<div style="width: 100%; text-align: center;background: #fff;">
+				<p style="display: inline-block;font-size: 18px; color: #333;line-height: 45px;">{{$route.params.type}}</p>
+			</div>
+			<div>
+				<router-view></router-view>
+			</div>
+		</div>
+		<template id="no1">
+			<div>
+				<div style="line-height: 40px;font-size: 14px;color: #666E76;">女生分类</div>
+				<div style="overflow-y: auto;height: 100%; background: #fff;">
+					<div>
+						<div style="padding:10px 0; width: 96%; border-bottom: 2px solid  #ccc;margin: 0 auto;" class="ent" v-for="i in ClassN.girl">
+							<div v-for="(a,$key,$index) in i" style="min-height:65px;">
+								<a :href="'#/no2/'+$key+'/'+a.cid+'/'+a.relatedName" style="display: block;color: #ccc;">
+									<div style="margin-bottom: 4px;padding-left: 4px;">{{$key}}</div>
+									<div>
+										<span class="ell" v-for="s in a.list">{{s}}</span>
+									</div>
+								</a>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div style="line-height: 40px;font-size: 14px;color: #666E76;">男生分类</div>
+				<div style="overflow-y: auto;height: 100%; background: #fff;">
+					<div>
+						<div style="padding:10px 0; width: 96%; border-bottom: 2px solid  #ccc;margin: 0 auto;" class="ent" v-for="i in ClassN.boy">
+							<div v-for="(a,$key,$index) in i" style="min-height:65px;">
+								<a :href="'#/no2/'+$key+'/'+a.cid+'/'+a.relatedName" style="display: block;color: #ccc;">
+									<div style="margin-bottom: 4px;padding-left: 4px;">{{$key}}</div>
+									<div>
+										<span class="ell" v-for="s in a.list">{{s}}</span>
+									</div>
+								</a>
+							</div>
+						</div>
+					</div>
+				</div>
+
+			</div>
+
+		</template>
+		<template id="no2">
+			<div>
+				<div style="background: #fff;padding-left: 20px;margin-bottom: 20px;">
+					<div style="float: left;color: #00C853;display: inline-block;line-height: 40px;padding-right: 20px;">全部</div>
+					<div style=" line-height: 40px; color: #ccc;display: inline-block; " class="clearfix" v-for="i in data1.class">
+						<p style="float: left;padding-right: 20px;">{{i.name}}</p>
+					</div>
+					<div style=" line-height: 40px; color: #ccc;display: inline-block; " class="clearfix" v-for="i in data1.tag">
+						<p style="float: left;padding-right: 20px;">{{i.name}}</p>
+					</div>
+				</div>
+				<div>
+					<div>
+						<div v-for="i in arr" style="background: #fff;margin-bottom: 10px;" class="clearfix">
+							<div style="float: left;width: 18%;padding:1% 2%;"><img width="100%" :src="i.cover"></div>
+							<div style="float: left;width: 78%;" class="clearfix">
+								<div style="font-size: 16px; line-height: 38px;">{{i.title}}</div>
+								<div style="font-size: 12px; color: #ccc; line-height: 20px;">{{i.author}}</div>
+								<div style="font-size: 12px;color: #ccc;line-height: 24px;">{{i.desc}}</div>
+								<div style="padding-top: 10px;margin:0 4px 10px 4px;">
+									<span v-for="j in i.tags.split(',')" style="font-size: 12px; border: 1px solid #00C853; padding: 2px 4px;margin: 0 4px;">{{j}}</span>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</template>
+	</body>
+	<script src="vue.js" type="text/javascript" charset="utf-8"></script>
+	<script src="vue-router.js" type="text/javascript" charset="utf-8"></script>
+	<script src="vue-resource.js" type="text/javascript" charset="utf-8"></script>
+	<script type="text/javascript">
+		var router = new VueRouter({
+			routes: [{
+				path: '/',
+				redirect: '/no1/分类'
+			}, {
+				path: '/no1/:type',
+				component: {
+					template: '#no1',
+					data() {
+						return {
+							ClassN: ''
+						}
+					},
+					created() {
+						this.$http.post('http://walden1.shuqireader.com/webapi/rank/classrelation?_=1571217539678', {
+							type: 1,
+							timestamp: 1571217539676,
+							sign: 'a062d47377204af0223a0dec4d8aec59',
+							shuqi_h5: '',
+						}, {
+							emulateJSON: true
+						}).then((data) => {
+							this.ClassN = data.body.data
+							console.log(data.body.data)
+						})
+					}
+				}
+			}, {
+				path: '/no2/:type/:uid/:name',
+				component: {
+					template: '#no2',
+					data() {
+						return {
+							data1: '',
+							arr: ''
+						}
+					},
+					created() {
+						var uid = this.$route.params.uid
+						var name = this.$route.params.name
+						this.$http.post('http://walden1.shuqireader.com/webapi/rank/classrelation?_=1571220235971', {
+							type: 2,
+							cid: uid,
+							timestamp: 1571220235968,
+							sign: '4e97b9d8142361752e1e4fb5c0b48134',
+							shuqi_h5: '',
+						}, {
+							emulateJSON: true
+						}).then((data) => {
+							console.log(data.data.data)
+							this.data1 = data.data.data
+						})
+						this.$http.get('http://read.xiaoshuo1-sm.com/novel/i.php?do=is_caterank&p=1&page=1&words=&shuqi_h5=&onlyCpBooks=1&secondCate=%E7%8E%B0%E4%BB%A3%E8%A8%80%E6%83%85&sort=monthHot&_=1571222214835', {
+							params: {
+								do: 'is_caterank',
+								p: 1,
+								page: 1,
+								words: '',
+								shuqi_h5: '',
+								onlyCpBooks: 1,
+								secondCate: name,
+								sort: 'monthHot',
+								_: 1571222214835,
+							}
+						}).then(data => {
+							this.arr = data.data.data
+							console.log(arr)
+						})
+					}
+				}
+			}]
+		})
+		new Vue({
+			el: '#box',
+			router
+
+		})
+	</script>
+
+</html>
