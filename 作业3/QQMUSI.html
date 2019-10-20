@@ -12,7 +12,7 @@
 			}
 			
 			body {
-				background: #;
+				background: #fff;
 			}
 			
 			.el-col {
@@ -48,28 +48,29 @@
 				<div style="width: 100%;background: #fff;">
 					<div style="width: 70%;margin: 0 auto; padding-left: 100px; margin-bottom: 20px;" class="clearfix">
 						<el-col :span="4">
-							<a v-ess style="text-align: center; display: inline-block;line-height: 40px;width: 100%;" href="#/" >首页</a>
+							<a v-ess style="text-align: center; display: inline-block;line-height: 40px;width: 100%;" href="#/">首页</a>
 						</el-col>
 						<el-col :span="4">
-							<a v-ess style="text-align: center; display: inline-block;line-height: 40px;width: 100%;" href="#/no2" >排行榜</a>
+							<a v-ess style="text-align: center; display: inline-block;line-height: 40px;width: 100%;" href="#/no2">排行榜</a>
 						</el-col>
 						<el-col :span="4">
-							<a v-ess style="text-align: center; display: inline-block;line-height: 40px;width: 100%;" href="#/no3" >歌单</a>
+							<a v-ess style="text-align: center; display: inline-block;line-height: 40px;width: 100%;" href="#/no3">歌单</a>
 						</el-col>
 						<el-col :span="4">
-							<a v-ess style="text-align: center; display: inline-block;line-height: 40px;width: 100%;" href="#/no4" >歌手</a>
+							<a v-ess style="text-align: center; display: inline-block;line-height: 40px;width: 100%;" href="#/no4">歌手</a>
 						</el-col>
 						<el-col :span="4">
-							<a v-ess style="text-align: center; display: inline-block;line-height: 40px;width: 100%;" href="#/no5/0/0" >播放列表</a>
-						</el-col>						
+							<a v-ess style="text-align: center; display: inline-block;line-height: 40px;width: 100%;" href="#/no5/0/0">播放列表</a>
+						</el-col>
 					</div>
 				</div>
 			</div>
 			<div>
 				<keep-alive>
 					<router-view></router-view>
+					<lee></lee>
 				</keep-alive>
-				
+
 			</div>
 			<div style="position: fixed;bottom:10px;left:0;min-height:60px;width: 100%;">
 				<div style="width: 80%;margin: 0 auto;min-height: 60px;">
@@ -108,7 +109,26 @@
 		</template>
 		<template id="no2">
 			<div>
+				<div style="width: 80%;margin: 0 auto;">
+					<div>
+						<el-col :span="24" v-for='i in data'>
+							<div style="width: 80%;margin: 0 auto;margin-bottom:20px;position: relative;" class="clearfix">
+								<a :href="'#/ess/'+i.id" style="width: 100%;position: absolute;top: 0;left: 0;height: 100%;"></a>
+								<div style="width:20%;float: left;margin-right: 2%;"><img style="width: 100%;height:240px;" :src="i.picUrl" /></div>
+								<div style="width: 76%; float: left;text-align: left;">
+									<div class="grid-content bg-purple" style="line-height: 38px;min-height: 60px;color: #28A745;">{{i.topTitle}}</div>
+									<div class="color" v-for="(a,$index) in i.songList" style="color: #000;white-space: nowrap;height: 60px;" class="clearfix">
+										<div style="float: left;width: 10%;line-height: 60px;">{{$index+1}}</div>
+										<div style="float: left;width: 30%;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;line-height: 60px;">{{a.songname}}</div>
+										<div style="float: left;width: 40%;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;line-height: 60px;">{{a.singername}}</div>
+									</div>
+								</div>
+							</div>
+					</div>
 
+					</el-col>
+				</div>
+			</div>
 			</div>
 		</template>
 		<template id="no3">
@@ -118,7 +138,12 @@
 		</template>
 		<template id="no4">
 			<div>
+				<div v-for="i in data" class="color">
+					<a :href="'#/ner/'+i.Fsinger_mid">
+						<div style="width: 80%;margin: 0 auto; line-height: 60px;">{{i.Fsinger_name}}</div>
 
+					</a>
+				</div>
 			</div>
 		</template>
 		<template id="no5">
@@ -127,6 +152,26 @@
 					<el-col :span="8">
 						<div class="grid-content bg-purple" v-ess style="text-align: left;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;">{{i}}</div>
 					</el-col>
+				</div>
+			</div>
+		</template>
+		<template id="ess">
+			<div>
+				<div>
+					<div v-for="i in data" class="color">
+						<a :href="'#/no5/'+i.data.songname+'/'+i.data.songmid">
+							<div style="width: 80%;margin: 0 auto; line-height: 60px;">{{i.data.songname}}</div>
+						</a>
+					</div>
+				</div>
+			</div>
+		</template>
+		<template id="ner">
+			<div>
+				<div v-for="i in data" class="color">
+					<a :href="'#/no5/'+i.musicData.songname+'/'+i.musicData.songmid">
+						<div style="width: 80%;margin: 0 auto; line-height: 60px;">{{i.musicData.songname}}</div>
+					</a>
 				</div>
 			</div>
 		</template>
@@ -148,104 +193,176 @@
 		})
 		var router = new VueRouter({
 			routes: [{
-				path: '/',
-				component: {
-					template: '#no1',
-					data() {
-						return {
-							value: '',
-							sirg: '',
-							data1: '',
-							mid: '',
-							name: '',
+					path: '/',
+					component: {
+						template: '#no1',
+						data() {
+							return {
+								value: '',
+								sirg: '',
+								data1: '',
+								mid: '',
+								name: '',
+							}
+						},
+						methods: {
+							sech() {
+								console.log(this.value)
+								this.$http.jsonp('https://c.y.qq.com/soso/fcgi-bin/client_search_cp?g_tk=5381&p=1&n=20&w=' + this.value + '&format=jsonp&jsonpCallback=callback&loginUin=0&hostUin=0&inCharset=utf8&outCharset=utf-8&notice=0&platform=yqq&needNewCode=0&remoteplace=txt.yqq.song&t=0&aggr=1&cr=1&catZhida=1&flag_qc=0', {
+									jsonpCallback: 'callback'
+								}).then((data) => {
+									this.data1 = data.data.data.song.list
+									sevent.style.height = '400px';
+								})
+
+							},
+							Play(n, m) {
+								this.name = n;
+								this.mid = m;
+
+							},
+							bnt(a) {
+								this.value = a
+							}
+						},
+						created() {
+
+							this.$http.jsonp('https://c.y.qq.com/splcloud/fcgi-bin/gethotkey.fcg?g_tk=5381&uin=0&format=jsonp&jsonpCallback=callback&inCharset=utf-8&outCharset=utf-8&notice=0&platform=h5&needNewCode=1&_=1513317614040', {
+								jsonpCallback: 'callback',
+							}).then((data) => {
+								this.sirg = data.data.data.hotkey;
+								console.log(this.sirg);
+							})
 						}
-					},
-					methods: {
-						sech() {
-							console.log(this.value)
-							this.$http.jsonp('https://c.y.qq.com/soso/fcgi-bin/client_search_cp?g_tk=5381&p=1&n=20&w=' + this.value + '&format=jsonp&jsonpCallback=callback&loginUin=0&hostUin=0&inCharset=utf8&outCharset=utf-8&notice=0&platform=yqq&needNewCode=0&remoteplace=txt.yqq.song&t=0&aggr=1&cr=1&catZhida=1&flag_qc=0', {
+					}
+				}, {
+					path: '/no2',
+					component: {
+						template: '#no2',
+						data() {
+							return {
+								data: '',
+							}
+						},
+						created() {
+							this.$http.jsonp('https://c.y.qq.com/v8/fcg-bin/fcg_myqq_toplist.fcg?g_tk=5381&uin=0&format=jsonp&jsonpCallback=callback&inCharset=utf-8&outCharset=utf-8&notice=0&platform=h5&needNewCode=1&_=1512554796112', {
 								jsonpCallback: 'callback'
 							}).then((data) => {
-								this.data1 = data.data.data.song.list
-								sevent.style.height = '400px';
+								this.data = data.data.data.topList
+
 							})
-						
-						},
-						Play(n, m) {
-							this.name = n;
-							this.mid = m;
-							//							console.log(this.mid, this.name)
-						},
-						bnt(a){
-							this.value=a
 						}
-					},
-					created() {
-
-						this.$http.jsonp('https://c.y.qq.com/splcloud/fcgi-bin/gethotkey.fcg?g_tk=5381&uin=0&format=jsonp&jsonpCallback=callback&inCharset=utf-8&outCharset=utf-8&notice=0&platform=h5&needNewCode=1&_=1513317614040', {
-							jsonpCallback: 'callback',
-						}).then((data) => {
-							this.sirg = data.data.data.hotkey;
-							console.log(this.sirg);
-						})
 					}
-				}
-			}, {
-				path: '/no2',
-				component: {
-					template: '#no2',
-				}
-			}, {
-				path: '/no3',
-				component: {
-					template: '#no3',
-					created() {
-
-					}
-				}
-			}, {
-				path: '/no4',
-				component: {
-					template: '#no4'
-				}
-
-			}, {
-				path: '/no5/:sname/:songmid',
-				component: {
-					template: '#no5',
-					data() {
-						return {
-							songmid: '',
-							sname: '',
-							arr: [],
+				}, {
+					path: '/no3',
+					component: {
+						template: '#no3',
+						created() {
+							this.$http.jsonp('https://u.y.qq.com/cgi-bin/musicu.fcg?callback=recom3477297233556247&g_tk=1278911659&jsonpCallback=recom3477297233556247&loginUin=0&hostUin=0&format=jsonp&inCharset=utf8&outCharset=utf-8¬ice=0&platform=yqq&needNewCode=0&data={"comm":{"ct":24},"category":{"method":"get_hot_category","param":{"qq":""},"module":"music.web_category_svr"},"recomPlaylist":{"method":"get_hot_recommend","param":{"async":1,"cmd":2},"module":"playlist.HotRecommendServer"},"playlist":{"method":"get_playlist_by_category","param":{"id":8,"curPage":1,"size":40,"order":5,"titleid":8},"module":"playlist.PlayListPlazaServer"},"new_song":{"module":"QQMusic.MusichallServer","method":"GetNewSong","param":{"type":0}},"new_album":{"module":"QQMusic.MusichallServer","method":"GetNewAlbum","param":{"type":0,"category":"-1","genre":0,"year":1,"company":-1,"sort":1,"start":0,"end":39}},"toplist":{"module":"music.web_toplist_svr","method":"get_toplist_index","param":{}},"focus":{"module":"QQMusic.MusichallServer","method":"GetFocus","param":{}}}' + this.$route.params.type + '&order=listen&begin=0&num=30&songstatus=1', {
+								jsonpCallback: 'callback'
+							}).then((data) => {
+								this.data=data
+								console.log(this.data)
+							})
 						}
-					},
-					created() {
-						this.songmid = this.$route.params.songmid
-						this.sname = this.$route.params.sname 
-						if(this.$route.params.songmid){
-							if(this.$route.params.songmid!=0 || this.$route.params.sname!=0){
-								this.arr.push(this.$route.params.sname)
-								// console.log(this.$route.params.sname)
-								console.log(this.arr)
+					}
+				}, {
+					path: '/ner/:type',
+					component: {
+						template: '#ner',
+						data() {
+							return {
+								data: ''
 							}
+						},
+						created() {
+							this.$http.jsonp('https://c.y.qq.com/v8/fcg-bin/fcg_v8_singer_track_cp.fcg?g_tk=5381&jsonpCallback=callback&loginUin=0&hostUin=0&format=jsonp&inCharset=utf8&outCharset=utf-8&notice=0&platform=yqq&needNewCode=0&singermid=' + this.$route.params.type + '&order=listen&begin=0&num=30&songstatus=1', {
+								jsonpCallback: 'callback'
+							}).then((data) => {
+								this.data=data.data.data.list
+								console.log(this.data)
+							})
 						}
 
-					},
-					watch:{
-						'$route.params'(a){
+					}
+				}, {
+					path: '/no4',
+					component: {
+						template: '#no4',
+						data() {
+							return {
+								data: '',
+							}
+						},
+						created() {
+							this.$http.jsonp('https://c.y.qq.com/v8/fcg-bin/v8.fcg?channel=singer&page=list&key=all_all_all&pagesize=100&pagenum=1&g_tk=5381&jsonpCallback=callback&loginUin=0&hostUin=0&format=jsonp&inCharset=utf8&outCharset=utf-8&notice=0&platform=yqq&needNewCode=0', {
+								jsonpCallback: 'callback',
+							}).then((data) => {
+								this.data = data.data.data.list
+
+							})
+						}
+					}
+				},
+				{
+					path: '/ess/:topid',
+					component: {
+						template: '#ess',
+						data() {
+							return {
+								data: '',
+							}
+						},
+						created() {
+							this.$http.jsonp('https://c.y.qq.com/v8/fcg-bin/fcg_v8_toplist_cp.fcg?g_tk=5381&uin=0&format=jsonp&jsonpCallback=callback&inCharset=utf-8&outCharset=utf-8&notice=0&platform=h5&needNewCode=1&tpl=3&page=detail&type=top&topid=' + this.$route.params.topid + '&_=1512563984096', {
+								jsonpCallback: 'callback',
+							}).then((data) => {
+
+								this.data = data.data.songlist
+								console.log(this.data)
+							})
+						}
+					}
+
+				},
+				{
+					path: '/no5/:sname/:songmid',
+					component: {
+						template: '#no5',
+						data() {
+							return {
+								songmid: '',
+								sname: '',
+								arr: [],
+							}
+						},
+						created() {
 							this.songmid = this.$route.params.songmid
-							this.sname = this.$route.params.sname
-							console.log(this.$route.params)
-							if(this.$route.params.songmid){
-								if(this.$route.params.songmid!=0 || this.$route.params.sname!=0){
+							this.sname = this.$route.params.sname 
+							if(this.$route.params.songmid) {
+								if(this.$route.params.songmid != 0 || this.$route.params.sname != 0) {
 									this.arr.push(this.$route.params.sname)
+									// console.log(this.$route.params.sname)
+									console.log(this.arr)
+								}
+							}
+
+						},
+						watch: {
+							'$route.params' (a) {
+								this.songmid = this.$route.params.songmid
+								this.sname = this.$route.params.sname
+								console.log(this.$route.params)
+								if(this.$route.params.songmid) {
+									if(this.$route.params.songmid != 0 || this.$route.params.sname != 0) {
+										this.arr.push(this.$route.params.sname)
+									}
 								}
 							}
 						}
 					}
 				}
-			}]
+			]
 		})
 		new Vue({
 			el: '#box',
